@@ -1,5 +1,7 @@
 ## archivos
 
+.
+
 ### crear un archivo:
 
 la funcion **fopen** recibe 2 parametros:
