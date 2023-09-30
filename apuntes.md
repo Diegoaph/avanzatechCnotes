@@ -1,7 +1,5 @@
 ## archivos
 
-.
-
 ### crear un archivo:
 
 la funcion **fopen** recibe 2 parametros:
@@ -55,4 +53,48 @@ printf("he leido el caracter %c\n",(char)charLeido);
 
 para evitar errores como por ejemplo intentar leer estando al final del archivo,  
 podemos aprovechar el caracter EOF _end of file_ y la funcion **feof**, la
-cual recibe el descriptor del archivo abierto y devuelve false o cero si el caracter actual es _distinto de EOF_ y en caso de que sea EOF, devuelve true, o no-cero.
+cual recibe el descriptor del archivo abierto y devuelve false o cero si el caracter actual es _distinto de EOF_ y en caso de que sea EOF, devuelve true, o no-cero.  
+para el mismo objetivo podriamos usar un simple
+
+```C
+if(charLeido!=EOF){}
+```
+
+#### manipulacion del cursor:
+
+hay dos funciones principales que nos permiten saber donde esta el cursor y moverlo a donde querramos:
+la primera es **ftell()** que recibe el descriptor al archivo abierto y devuelve un long, este long es un numero entero que representa la posicion del cursor en el archivo. qu ese puede imprimir con el placeholder %ld.  
+devuelve -1 si hay algun error.
+
+la otra funcion que usaremos es **fseek** que recibe el descriptor,un numero entero positivo o negativo que indica la cantidad de pasos y la direccion que quiero que el cursor se mueva, y el tercer parametro indica desde donde se va a mover el cursor:
+
+-SEEK_SET:desde el inicio del documento  
+-SEEK_END:desde el final del documento  
+-SEEK_CUR:desde la posicion actual del cursor.
+
+de modo que por ejemplo, para mover hacia la izquierda cinco veces el cursor desde donde se encuentre en el momento, usaríamos:
+
+```C
+fseek(myFile,-5,SEEK_CUR);
+```
+
+CALCULAR EL TAMAÑO TOTAL DEL DOCUMENTO:  
+puedo abrir el archivo en modo lectura,  
+llamar a fseek y mover mi cursor al final del documento,  
+con ftell puedo saber el largo total del documento en bytes, ya que la cantidad total de caracteres es la cantidad de bytes,  
+Al final podria usar de nuevo fseek para llevar mi cursor al inicio del documento, o usar la funcion **rewind(myFile)** que hace exactamente eso... o puedo continuar con cualquier otra tarea que quiera.
+
+otra opcion para leer el archivo, es la funcion **fgets()**  
+si fgetc permite guardar en un buffer el valor de un caracter, fgets permite hacerlo con el contenido de un string.  
+Recibe 3 parametros:
+
+1. un puntero a el buffer en el cual quiero guardar cada string, lo mas lógico seria definir el buffer como un string (char buffer[50] por ejemplo) y al ser un array ya es un puntero, de modo que al pasarlo como argumento seria solo el nombre y ya.  
+   2)la cantidad maxima de caracteres que quiero que lea o que guarde en el buffer, aqui conviene poner el la misma cantidad con la que se definio el buffer (50, en nuestro ejemplo).
+2. el descriptor del archivo.
+
+si fgets logra su objetivo, devuelve un puntero que apunta ala direccion de memoria del buffer (es decir devuelve el miismo buffer) y si tiene algun error devuelve NULL.  
+a demás, fgets detiene su lectura cuando:
+
+-llega al numero de caracteres definido en el param 2  
+-llega a un salto de linea  
+-llega a un EOF
